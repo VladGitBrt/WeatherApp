@@ -1,6 +1,11 @@
 import { Component } from '@angular/core';
 import {GetWeatherService} from './get-weather.service';
-
+export interface WeatherData{
+  cityName: string;
+  temperature: string;
+  pressure: string;
+  weatherDescription: string;
+}
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -9,13 +14,21 @@ import {GetWeatherService} from './get-weather.service';
 export class AppComponent {
   title = 'NewWeather';
   condition = 'SEND';
-  weatherArr = [];
-  result = {};
-  constructor(private svc: GetWeatherService) {
+  weatherArr: WeatherData [] = [];
+  result: any;
+  value: WeatherData | undefined;
+  constructor(public svc: GetWeatherService) {
   }
   sendRequest(countryName: string): void{
-    this.result = this.svc.sendRequest(countryName).subscribe((result) => {
-    console.log(result);
+    this.svc.sendRequest(countryName).subscribe((result) => {
+    this.result = result,
+    this.value = {
+      cityName: this.result.name,
+      temperature: this.result.main.temp,
+      pressure: this.result.main.pressure,
+      weatherDescription: this.result.weather[0].description
+    },
+      this.weatherArr.push(this.value);
   });
   }
 }
