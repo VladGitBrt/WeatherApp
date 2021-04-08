@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {GetWeatherService} from './get-weather.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,14 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'NewWeather';
+  condition = 'SEND';
+  weatherArr = [];
+  result = {};
+  constructor(private svc: GetWeatherService) {
+  }
+  sendRequest(countryName: string): void{
+    this.result = this.svc.sendRequest(countryName).subscribe((result) => {
+    console.log(result);
+  });
+  }
 }
