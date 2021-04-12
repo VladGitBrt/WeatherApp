@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import {GetWeatherService} from '../get-weather.service';
-import {HttpClient} from '@angular/common/http';
 import { GetLocationService } from '../get-location.service';
+import { ResultFunc } from 'rxjs/internal/observable/generate';
 
 export interface WeatherData{
   cityName: string;
   temperature: string;
   pressure: string;
   weatherDescription: string;
+}
+export interface GeoInfo{
+  documentation: string;
 }
 @Component({
   selector: 'app-show-weather',
@@ -19,17 +22,22 @@ export class ShowWeatherComponent implements OnInit {
   condition = 'SEND';
   weatherArr: WeatherData [] = [];
   result: any;
-  lat = 0;
-  lon = 0;
+  geoResults = "";
   key = 'df1a0de255f943c0a2dfe3e3b72b54a4';
   value: WeatherData | undefined;
   constructor(public svc: GetWeatherService, public location: GetLocationService) { }
 
   ngOnInit(): void {
-    navigator.geolocation.getCurrentPosition(this.successCallback, this.failCallback);
+    navigator.geolocation.getCurrentPosition((result)=>{
+      console.log(result);
+      let lat = result.coords.latitude;
+      let lon = result.coords.longitude;
+      this.getGeo(lat,lon);
+    }
+      , this.failCallback);
   }
   sendRequest(countryName: string): void{
-    this.svc.sendRequest(countryName).subscribe((result) => {
+    this.svc.sendRequest(countryName).subscribe(result => {
       this.result = result,
         this.value = {
           cityName: this.result.name,
@@ -40,12 +48,14 @@ export class ShowWeatherComponent implements OnInit {
         this.weatherArr.push(this.value);
     });
   }
-  successCallback(position: any): void{
-    console.log(position);
-    this.location.getCity();
-}
-  failCallback(error: any): void{
+  failCallback(error: any){
     console.error(error);
   }
-  
+  getGeo(lon: number,lat: number){
+    this.location.getCity(lat,lon).subscribe(geo => {
+     console.log(geo);
+     this.geoResults = geo.results[0].components.city;
+     console.log(this.geoResults);
+    });
+  }
 }

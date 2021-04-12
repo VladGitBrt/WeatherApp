@@ -1,4 +1,4 @@
-<input type="text" #country><button (click)="sendRequest(country.value)">{{condition}}</button>
+<input type="text" #country [value]="geoResults"><button (click)="sendRequest(country.value)">{{condition}}</button>
 <div class="container">
   <div *ngFor="let item of weatherArr" class="weatherItem">
     <p>{{item.cityName}}</p>
