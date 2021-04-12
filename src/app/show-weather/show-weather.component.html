@@ -1,0 +1,9 @@
+<input type="text" #country><button (click)="sendRequest(country.value)">{{condition}}</button>
+<div class="container">
+  <div *ngFor="let item of weatherArr" class="weatherItem">
+    <p>{{item.cityName}}</p>
+    <p>{{item.temperature}}</p>
+    <p>{{item.pressure}}</p>
+    <p>{{item.weatherDescription}}</p>
+  </div>
+</div>
